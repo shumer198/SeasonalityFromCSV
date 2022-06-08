@@ -1,0 +1,39 @@
+  <html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        quotes = {{quotes|safe}}
+        var new_quotes = []
+        new_quotes.push(["Date", "Price", "Seasonality"])
+        quotes.forEach(function (arrayItem) {
+          new_quotes.push([new Date(arrayItem.date),
+            arrayItem.close, arrayItem.seasonality]);
+        })
+
+        var data = google.visualization.arrayToDataTable(new_quotes);
+
+        var options = {
+          title: 'Price and seasonality for KC-057 (use scroll to change zoom)',
+          curveType: 'function',
+          legend: { position: 'bottom' },
+            explorer: {
+            // actions: ['dragToZoom', 'rightClickToReset'],
+                axis:"horizontal",
+                     maxZoomOut:8,
+                     keepInBounds: true
+            }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="curve_chart" style="width: 1200px; height: 700px"></div>
+  </body>
+</html>
