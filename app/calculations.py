@@ -59,5 +59,21 @@ def get_quotes_with_seasonality(quotes):
     quotes = quotes.merge(seasonality, on="day_of_year", how="left")
     quotes = quotes.drop(columns=["delta_x", "day_of_year"])
     quotes = quotes.rename(columns={"delta_y": "seasonality"})
-
     return quotes
+
+
+def get_quotes_for_send(quotes):
+    quotes_for_send = list()
+    print(quotes)
+
+    for quote in quotes:
+        print(quote)
+        quotes_for_send.append(
+            {
+                "date": quote.date.isoformat(),
+                "close": quote.close,
+                "seasonality": round(quote.seasonality * 5),
+            }
+        )
+
+    return quotes_for_send
