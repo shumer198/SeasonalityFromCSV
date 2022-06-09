@@ -8,10 +8,13 @@
       function drawChart() {
         quotes = {{quotes|safe}}
         var new_quotes = []
+
         new_quotes.push(["Date", "Price", "Seasonality"])
+
         quotes.forEach(function (arrayItem) {
-          new_quotes.push([new Date(arrayItem.date),
-            arrayItem.close, arrayItem.seasonality]);
+          new_quotes.push([new Date(arrayItem[2]),
+          arrayItem[0],
+          arrayItem[1]]);
         })
 
         var data = google.visualization.arrayToDataTable(new_quotes);

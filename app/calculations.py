@@ -1,19 +1,20 @@
 import logging
 import pandas as pd
 from scipy import signal
+from typing import List, Union
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def get_quotes_from_csv(file_path: str):
+def get_quotes_from_csv(file_path: str) -> Union[pd.DataFrame, tuple]:
     """
     Load quotes from csv file to pandas Dataframe
 
     :param file_path: path to file with quotes
     :type: str
 
-    :return: quotes dataframe
+    :return: quotes dataframe or tuple with error description and error code
     :type: pd.Dataframe
     """
     try:
@@ -29,7 +30,7 @@ def get_quotes_from_csv(file_path: str):
     return quotes
 
 
-def get_seasonality(quotes):
+def get_seasonality(quotes: pd.DataFrame) -> pd.DataFrame:
     """
     Return dataframe with calculated seasonality
 
@@ -49,10 +50,11 @@ def get_seasonality(quotes):
     return seasonality
 
 
-def get_quotes_with_seasonality(quotes):
+def get_quotes_with_seasonality(quotes: pd.DataFrame) -> pd.DataFrame:
     """
     Append seasonality series to quotes dataframe
     :param quotes: quotes dataframe
+    :type: pd.Dataframe
     """
     seasonality = get_seasonality(quotes=quotes)
     quotes["day_of_year"] = pd.DatetimeIndex(quotes.date).day_of_year
@@ -62,18 +64,20 @@ def get_quotes_with_seasonality(quotes):
     return quotes
 
 
-def get_quotes_for_send(quotes):
-    quotes_for_send = list()
-    print(quotes)
+def get_quotes_for_send(quotes: pd.DataFrame) -> List[List]:
+    """
+    Return array of quotes for Google charts
+    in format [ [close, seasonality], 'date'], [close, seasonality], 'date'], ....].
+    for example [[102.45, 2.211825203856459, '2022-04-20'], [104.03, 2.0008669193674242, '2022-04-21'].....]
 
-    for quote in quotes:
-        print(quote)
-        quotes_for_send.append(
-            {
-                "date": quote.date.isoformat(),
-                "close": quote.close,
-                "seasonality": round(quote.seasonality * 5),
-            }
-        )
+    :param quotes: quotes
+    :type: pd.Dataframe
+
+    :return: array of quotes
+    :type: List[List]
+    """
+    quotes['date_as_str'] = quotes['date'].dt.strftime('%Y-%m-%d')
+    quotes = quotes.drop(columns=["market", "date", "open", "high", "low"])
+    quotes_for_send = quotes.values.tolist()
 
     return quotes_for_send
