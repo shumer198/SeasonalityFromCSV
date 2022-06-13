@@ -1,42 +1,27 @@
   <html>
   <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-        quotes = {{quotes|safe}}
-        var new_quotes = []
-
-        new_quotes.push(["Date", "Price", "Seasonality"])
-
-        quotes.forEach(function (arrayItem) {
-          new_quotes.push([new Date(arrayItem[2]),
-          arrayItem[0],
-          arrayItem[1]]);
-        })
-
-        var data = google.visualization.arrayToDataTable(new_quotes);
-
-        var options = {
-          title: 'Price and seasonality for KC-057 (use scroll to change zoom)',
-          curveType: 'function',
-          legend: { position: 'bottom' },
-            explorer: {
-            // actions: ['dragToZoom', 'rightClickToReset'],
-                axis:"horizontal",
-                     maxZoomOut:8,
-                     keepInBounds: true
-            }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-        chart.draw(data, options);
-      }
-    </script>
+    <title>Seasonality</title>
   </head>
   <body>
-    <div id="curve_chart" style="width: 1200px; height: 700px"></div>
+  <h2>Calculation of seasonality</h2>
+  <span style="margin-bottom: 20px"> Just select *.csv file with quotes and click "Calculate" button. </span>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div>
+                <input name="file" type="file" multiple=false />
+                <input type="submit" value="Calculate" />
+            </div>
+        </form>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
   </body>
 </html>
