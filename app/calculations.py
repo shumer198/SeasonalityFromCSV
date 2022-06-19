@@ -20,8 +20,8 @@ def get_quotes_from_csv(file_path: str) -> Union[pd.DataFrame, tuple]:
     try:
         header_list = ["market", "date", "open", "high", "low", "close"]
         quotes = pd.read_csv(
-            file_path, parse_dates=False, delimiter=";", decimal=",", names=header_list
-        )
+            file_path, parse_dates=False, delimiter=";", decimal=",",
+            header=None, skiprows=1, names=header_list)
         quotes["date"] = pd.to_datetime(quotes["date"], format="%d.%m.%Y")
     except Exception as e:
         logger.error(f"Data loading error. {e}")
@@ -61,6 +61,7 @@ def get_quotes_with_seasonality(quotes: pd.DataFrame) -> pd.DataFrame:
     quotes = quotes.merge(seasonality, on="day_of_year", how="left")
     quotes = quotes.drop(columns=["delta_x", "day_of_year"])
     quotes = quotes.rename(columns={"delta_y": "seasonality"})
+
     return quotes
 
 
@@ -78,6 +79,34 @@ def get_quotes_for_send(quotes: pd.DataFrame) -> List[List]:
     """
     quotes['date_as_str'] = quotes['date'].dt.strftime('%Y-%m-%d')
     quotes = quotes.drop(columns=["market", "date", "open", "high", "low"])
+
+    scale, middle_price = get_display_metrics(quotes)
+    quotes['seasonality'] = quotes['seasonality'] * scale + middle_price
+
     quotes_for_send = quotes.values.tolist()
 
     return quotes_for_send
+
+
+def get_display_metrics(quotes: pd.DataFrame) -> tuple:
+    """
+        Return scale of seasonality chart in relation to price (for charting only)
+        and middle of price range for charts adjusting
+
+        :param quotes: quotes
+        :type: pd.Dataframe
+
+        :return: scale
+        :type: int
+    """
+    max_price = quotes['close'].max()
+    min_price = quotes['close'].min()
+    price_range = max_price - min_price
+    middle_price = round((max_price + min_price)/2)
+
+    max_seasonality = quotes['seasonality'].max()
+    min_seasonality = quotes['seasonality'].min()
+    seasonality_range = max_seasonality - min_seasonality
+    scale = round(price_range / (seasonality_range * 4), 0)
+
+    return scale, middle_price

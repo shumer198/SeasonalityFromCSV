@@ -20,7 +20,7 @@
         var data = google.visualization.arrayToDataTable(new_quotes);
 
         var options = {
-          title: 'Price and seasonality for KC-057 (use scroll to change zoom)',
+          title: 'Price and seasonality (use scroll to change zoom)',
           curveType: 'function',
           legend: { position: 'bottom' },
             explorer: {
@@ -28,7 +28,13 @@
                 axis:"horizontal",
                      maxZoomOut:8,
                      keepInBounds: true
-            }
+            },
+
+          hAxis: {
+          format: 'M/d/yyyy',
+          gridlines: {count: 15}
+          }
+
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));

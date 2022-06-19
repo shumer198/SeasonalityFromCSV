@@ -15,12 +15,13 @@ ALLOWED_EXTENSIONS = {'csv'}
 def create_app():
     app = Flask(__name__)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    # For demo only. In prod use environment variable and decouple
     app.config['SECRET_KEY'] = '8f42a73054b1749f8f58848be5e6502c'
 
     @app.route("/", methods=['GET', 'POST'])
     def main_page():
         """
-        Return web page with choose file form
+        Returns a web page with a file selection form
         """
         if request.method == 'GET':
             response = make_response(render_template("index.html"))
@@ -41,7 +42,6 @@ def create_app():
                 file_path = path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
 
-                logger.info(filename)
                 quotes = calc.get_quotes_from_csv(file_path=file_path)
                 quotes_with_seasonality = calc.get_quotes_with_seasonality(quotes=quotes)
                 quotes_for_send = calc.get_quotes_for_send(quotes_with_seasonality)

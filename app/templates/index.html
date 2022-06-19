@@ -1,27 +1,27 @@
-  <html>
-  <head>
+<html>
+    <head>
     <title>Seasonality</title>
-  </head>
-  <body>
-  <h2>Calculation of seasonality</h2>
-  <span style="margin-bottom: 20px"> Just select *.csv file with quotes and click "Calculate" button. </span>
-        <form action="/" method="post" enctype="multipart/form-data">
-            <div>
-                <input name="file" type="file" multiple=false />
-                <input type="submit" value="Calculate" />
-            </div>
-        </form>
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-
-
-  </body>
+    </head>
+    <body>
+        <h2>Seasonality calculation</h2>
+        <div>Just select *.csv file with quotes and click "Calculate" button.</div>
+        <div> String format for the quotation file: Market; Date; Open; High; Low; Close </div>
+            <form action="/" method="post" enctype="multipart/form-data" style="margin-top: 20px;">
+                <div>
+                    <input name="file" type="file" multiple=false />
+                </div>
+                <div style="margin-top: 20px;">
+                    <input type="submit" value="Calculate" />
+                </div>
+            </form>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+    </body>
 </html>
