@@ -1,5 +1,5 @@
 import logging
-import calculations as calc
+from seasonality import get_quotes_for_send
 from os import path
 
 from flask import Flask, make_response, render_template, request, flash, redirect
@@ -18,40 +18,41 @@ def create_app():
     # For demo only. In prod use environment variable and decouple
     app.config['SECRET_KEY'] = '8f42a73054b1749f8f58848be5e6502c'
 
-    @app.route("/", methods=['GET', 'POST'])
+    @app.route("/", methods=['GET'])
     def main_page():
-        """
-        Returns a web page with a file selection form
-        """
-        if request.method == 'GET':
-            response = make_response(render_template("index.html"))
-            response.headers["Content-type"] = "text/html; charset=utf-8"
-            return response
+        return render_template("index.html")
 
-        else:
-            if 'file' not in request.files:
-                flash('Error. No file part.')
-                return redirect(request.url)
-            file = request.files['file']
+    @app.route("/", methods=['POST'])
+    def calculate():
+        """
+        Calculates seasonality from quotes from the selected file
+        """
+        if 'file' not in request.files:
+            flash('Error. No file part.')
+            return redirect(request.url)
+        file = request.files['file']
 
-            if file.filename == '':
-                flash('Error. No selected file')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = path.join(app.config['UPLOAD_FOLDER'], filename)
+        if file.filename == '':
+            flash('Error. No selected file')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = path.join('123', app.config['UPLOAD_FOLDER'], filename)
+            try:
                 file.save(file_path)
-
-                quotes = calc.get_quotes_from_csv(file_path=file_path)
-                quotes_with_seasonality = calc.get_quotes_with_seasonality(quotes=quotes)
-                quotes_for_send = calc.get_quotes_for_send(quotes_with_seasonality)
-                response = make_response(render_template("seasonality.html", quotes=quotes_for_send))
-                response.headers["Content-type"] = "text/html; charset=utf-8"
-
-                return response
-            else:
-                flash('Error. File extension must be .csv')
+            except Exception as e:
+                logger.info(f'File save error. {e}')
+                flash('Internal server error')
                 return redirect(request.url)
+
+
+
+            quotes_for_send = get_quotes_for_send(file_path=file_path)
+            return render_template("seasonality.html", quotes=quotes_for_send)
+        else:
+            flash('Error. File extension must be .csv')
+            return redirect(request.url)
 
     return app
 

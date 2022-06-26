@@ -65,7 +65,7 @@ def get_quotes_with_seasonality(quotes: pd.DataFrame) -> pd.DataFrame:
     return quotes
 
 
-def get_quotes_for_send(quotes: pd.DataFrame) -> List[List]:
+def get_quotes_for_send(file_path: str) -> List[List]:
     """
     Return array of quotes for Google charts
     in format [ [close, seasonality], 'date'], [close, seasonality], 'date'], ....].
@@ -77,6 +77,11 @@ def get_quotes_for_send(quotes: pd.DataFrame) -> List[List]:
     :return: array of quotes
     :type: List[List]
     """
+    # Load quotes to Daraframe
+    quotes = get_quotes_from_csv(file_path=file_path)
+    # Append seasonality to quotes dataframe
+    quotes = get_quotes_with_seasonality(quotes=quotes)
+
     quotes['date_as_str'] = quotes['date'].dt.strftime('%Y-%m-%d')
     quotes = quotes.drop(columns=["market", "date", "open", "high", "low"])
 
