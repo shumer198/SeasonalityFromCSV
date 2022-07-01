@@ -11,7 +11,16 @@ Python / Flask / Pandas / scipy / JavaScript
 pip install -r requirements.txt
 
 ```
-### 2. Using
+
+### 2. Start:
+```
+python main.py
+
+```
+
+### 3. Using
+Go to: http://127.0.0.1:80
+
 Just select *.csv file with quotes and click "Calculate" button.
 
 The file can contain any set of columns, but there must be columns with the headers "Date" and "Close" among them.
