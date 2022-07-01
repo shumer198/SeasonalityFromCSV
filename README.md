@@ -1,5 +1,10 @@
 ## Calculation of seasonality.
-The program calculates the seasonality within the year for a set of quotes (daily bars). Seasonality is calculated based on the closing prices.
+The program calculates the seasonality within the year for a set of quotes (daily bars)
+and displays the price and seasonality chart. Seasonality is calculated based on the
+closing prices.
+
+####Stack:
+Python / Flask / Pandas / scipy / JavaScript
 
 ### 1. Install:
 ```
