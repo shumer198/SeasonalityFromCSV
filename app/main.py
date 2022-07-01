@@ -16,6 +16,8 @@ ALLOWED_EXTENSIONS = {"csv"}
 def create_app():
     app = Flask(__name__)
     app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+    # For demo only. In prod use environment variable and decouple
+    app.config["SECRET_KEY"] = '2356782959278652876'
 
     @app.route("/", methods=["GET"])
     def main_page():
@@ -60,4 +62,4 @@ def allowed_file(filename):
 
 if __name__ == "__main__":
     application = create_app()
-    application.run()
+    application.run(host='0.0.0.0', port=80)
