@@ -1,5 +1,6 @@
   <html>
   <head>
+    <title>Seasonality</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
@@ -12,38 +13,63 @@
         new_quotes.push(["Date", "Price", "Seasonality"])
 
         quotes.forEach(function (arrayItem) {
-          new_quotes.push([new Date(arrayItem[2]),
-          arrayItem[0],
-          arrayItem[1]]);
+          new_quotes.push([new Date(arrayItem[0]),
+          arrayItem[1],
+          arrayItem[2]]);
         })
 
         var data = google.visualization.arrayToDataTable(new_quotes);
 
         var options = {
-          title: 'Price and seasonality (use scroll to change zoom)',
+            chartArea: {
+              width: '90%',
+              height:'90%'
+            },
+            legend: {
+              position: 'top'
+            },
+
           curveType: 'function',
           legend: { position: 'bottom' },
+
+            vAxes: {
+              0: {viewWindowMode:'explicit',
+                      title: 'Price',
+                      gridlines: {color: 'transparent'},
+                       },
+              1: {title: 'Seasonality', gridlines: {color: 'transparent'}},
+            },
+            series: {
+              0: {targetAxisIndex:0},
+              1:{targetAxisIndex:1}
+            },
+
             explorer: {
-            // actions: ['dragToZoom', 'rightClickToReset'],
-                axis:"horizontal",
-                     maxZoomOut:8,
-                     keepInBounds: true
+                 axis:"horizontal",
+                 maxZoomOut:8,
+                 maxZoomIn: 0.05,
+                 keepInBounds: true
             },
 
           hAxis: {
-          format: 'M/d/yyyy',
-          gridlines: {count: 15}
+              format: 'dd/MM/yyyy',
+              gridlines: {count: 15}
           }
 
         };
 
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        var chart = new google.visualization.ComboChart(document.getElementById('price_chart'));
         chart.draw(data, options);
       }
+
     </script>
   </head>
   <body>
-    <div id="curve_chart" style="width: 1200px; height: 700px"></div>
+      <div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+        <h2 style="margin-bottom: 0px;">Price and seasonality </h2>
+      </div>
+      <div style="width: 100%; display: flex; justify-content: center; align-items: center;"> (use scroll to change zoom, press and pull to scroll)</div>
     <a href="/">Back</a>
+    <div id="price_chart" style="width: 100%; height: 90%"></div>
   </body>
 </html>
