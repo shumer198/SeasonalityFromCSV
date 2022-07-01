@@ -3,7 +3,7 @@ The program calculates the seasonality within the year for a set of quotes (dail
 and displays the price and seasonality chart. Seasonality is calculated based on the
 closing prices.
 
-####Stack:
+#### Stack:
 Python / Flask / Pandas / scipy / JavaScript
 
 ### 1. Install:
